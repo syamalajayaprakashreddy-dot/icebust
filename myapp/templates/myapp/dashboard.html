@@ -103,12 +103,13 @@
 
     <td class="text-end">
   {% if c.status != "sent" %}
-    <form method="post" action="{% url 'campaign_send' c.id %}" style="display:inline;">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-sm btn-outline-success">
-        Send
-      </button>
-    </form>
+   <form method="post" action="{% url 'campaign_send' c.id %}" style="display:inline;">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-sm btn-success">
+    Send
+  </button>
+</form>
+
   {% else %}
     <span class="text-muted">Sent</span>
   {% endif %}

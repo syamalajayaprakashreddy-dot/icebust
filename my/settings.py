@@ -29,9 +29,12 @@ DEBUG = False
 
 
 ALLOWED_HOSTS = [
-    "app.icebust.shop",
-    "icebust.onrender.com",
+    "127.0.0.1",
+    "localhost",
+    ".onrender.com",
 ]
+
+
 
 
 

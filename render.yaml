@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: icebust
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn my.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: my.settings
+      - key: PYTHON_VERSION
+        value: 3.13.4

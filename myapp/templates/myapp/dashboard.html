@@ -1,0 +1,177 @@
+{% extends "myapp/base.html" %}
+{% block content %}
+
+<!-- Stats Row -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3">
+    <div class="card shadow-sm border-0 p-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="text-muted small">Total Campaigns</div>
+          <div class="h3 mb-0">{{ total_campaigns }}</div>
+        </div>
+        <div class="fs-1 text-primary">✉️</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card shadow-sm border-0 p-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="text-muted small">Emails Sent</div>
+          <div class="h3 mb-0">{{ emails_sent }}</div>
+        </div>
+        <div class="fs-1 text-primary">📨</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card shadow-sm border-0 p-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="text-muted small">Open Rate</div>
+          <div class="h3 mb-0">{{ open_rate }}%</div>
+        </div>
+        <div class="fs-1 text-primary">👁️</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-3">
+    <div class="card shadow-sm border-0 p-3">
+      <div class="d-flex align-items-center justify-content-between">
+        <div>
+          <div class="text-muted small">Click Rate</div>
+          <div class="h3 mb-0">{{ click_rate }}%</div>
+        </div>
+        <div class="fs-1 text-primary">🖱️</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <!-- Recent Campaigns Table -->
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h5 class="mb-0">Recent Campaigns</h5>
+          <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Name</th>
+                <th>Template</th>
+                <th>Status</th>
+                <th>Scheduled Date</th>
+                <th class="text-end">Sent Emails</th>
+                <th class="text-end">Actions</th>
+
+              </tr>
+            </thead>
+            <tbody>
+  {% for c in recent_campaigns %}
+  <tr>
+    <td class="fw-semibold">{{ c.name }}</td>
+
+    <td>
+      {% if c.template %}
+        {{ c.template.name }}
+      {% else %}
+        <span class="text-muted">—</span>
+      {% endif %}
+    </td>
+
+    <td>
+      <span class="badge
+        {% if c.status == 'sent' %} bg-success
+        {% elif c.status == 'scheduled' %} bg-primary
+        {% else %} bg-warning text-dark {% endif %}">
+        {{ c.status|title }}
+      </span>
+    </td>
+
+    <td>{{ c.scheduled_time|date:"M d, Y" }}</td>
+
+    <td class="text-end">{{ c.logs.count }}</td>
+
+    <td class="text-end">
+  {% if c.status != "sent" %}
+    <form method="post" action="{% url 'campaign_send' c.id %}" style="display:inline;">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-sm btn-outline-success">
+        Send
+      </button>
+    </form>
+  {% else %}
+    <span class="text-muted">Sent</span>
+  {% endif %}
+</td>
+
+  </tr>
+  {% empty %}
+  <tr>
+    <td colspan="6" class="text-muted">No campaigns yet</td>
+  </tr>
+  {% endfor %}
+</tbody>
+
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="mb-3">Quick Actions</h5>
+
+        <a href="{% url 'campaign_create' %}" class="btn btn-primary w-100 mb-2">
+  Create New Campaign
+</a>
+
+<a href="{% url 'template_list' %}" class="btn btn-primary w-100 mb-2">
+  Manage Email Templates
+</a>
+
+<a href="{% url 'recipient_import' %}" class="btn btn-primary w-100">
+  Import Recipients
+</a>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts Row (placeholder boxes for now) -->
+<div class="row g-4 mt-1">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="mb-3">Open & Click Rates</h5>
+        <div class="bg-light rounded" style="height: 240px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h5 class="mb-3">Email Performance</h5>
+        <div class="bg-light rounded" style="height: 240px;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

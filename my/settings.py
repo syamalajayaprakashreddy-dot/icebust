@@ -139,7 +139,7 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # EMAIL (SMTP) SETTINGS
 # =========================
 
-EEMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 EMAIL_HOST = "smtp-relay.brevo.com"
 EMAIL_PORT = 587
@@ -148,7 +148,7 @@ EMAIL_USE_TLS = True
 
 
 EMAIL_HOST_USER = os.environ.get("justuse0863@gmail.com")
-EMAIL_HOST_PASSWORD = os.environ.get("King@123")
+EMAIL_HOST_PASSWORD = os.environ.get("xsmtpsib-aa16b444f025474b7c9413c6d7c553a4269b0d9bd578f966928ee09a6785db07-HKFUoRGve2l73ik8")
 
 
 DEFAULT_FROM_EMAIL = "noreply@icebust.shop"

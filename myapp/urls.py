@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import smtp_test
 
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
@@ -15,6 +16,14 @@ urlpatterns = [
     path("recipients/import/", views.recipient_import, name="recipient_import"),
     path("campaigns/<int:pk>/send/", views.campaign_send, name="campaign_send"),
     path("track/open/<int:log_id>/", views.track_open, name="track_open"),
+    path("smtp-test/", smtp_test)
+    
+
+urlpatterns = [
+    # other urls...
+    ,
+]
+
     
 ]
 

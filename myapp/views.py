@@ -59,12 +59,22 @@ def campaign_create(request):
     if request.method == "POST":
         form = CampaignForm(request.POST)
         if form.is_valid():
-            form.save()
+            campaign = form.save()
+
+            send_mail(
+                subject=f"Campaign Created: {campaign.name}",
+                message="Your campaign was created successfully.",
+                from_email=None,
+                recipient_list=["syamalajayaprakashreddy@gmail.com"],
+                fail_silently=False,
+            )
+
             return redirect("dashboard")
     else:
         form = CampaignForm()
 
     return render(request, "myapp/campaign_create.html", {"form": form})
+
 
 
 # =======================
@@ -197,3 +207,17 @@ def track_open(request, log_id):
     )
 
     return HttpResponse(pixel, content_type="image/gif")
+
+
+from django.http import HttpResponse
+from django.core.mail import send_mail
+
+def smtp_test(request):
+    send_mail(
+        "RENDER SMTP TEST",
+        "If you received this, Brevo SMTP works on Render.",
+        "noreply@icebust.shop",
+        ["syamalajayaprakashreddy@gmail.com"],
+        fail_silently=False,
+    )
+    return HttpResponse("SMTP test email sent. Check inbox/spam.")

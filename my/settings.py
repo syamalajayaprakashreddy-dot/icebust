@@ -143,16 +143,20 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # EMAIL (SMTP) SETTINGS
 # =========================
 
+
+
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 EMAIL_HOST = "smtp-relay.brevo.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = os.environ.get("apikey")
-EMAIL_HOST_PASSWORD = os.environ.get("xsmtpsib-aa16b444f025474b7c9413c6d7c553a4269b0d9bd578f966928ee09a6785db07-W8JHSB8KT54MsnFX")
+EMAIL_HOST_USER = os.environ.get("apikey")      # must be "apikey"
+EMAIL_HOST_PASSWORD = os.environ.get("xsmtpsib-aa16b444f025474b7c9413c6d7c553a4269b0d9bd578f966928ee09a6785db07-qqJCvgydHUeDR6Ss")  # Brevo SMTP key
 
-DEFAULT_FROM_EMAIL = "noreply@icebust.shop"
+DEFAULT_FROM_EMAIL = "Icebust <noreply@icebust.shop>"
+
+
 
 
 

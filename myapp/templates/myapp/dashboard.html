@@ -1,5 +1,13 @@
+
 {% extends "myapp/base.html" %}
 {% block content %}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<script>
+console.log("DASHBOARD JS LOADED");
+</script>
 
 <!-- Stats Row -->
 <div class="row g-3 mb-4">
@@ -8,7 +16,14 @@
       <div class="d-flex align-items-center justify-content-between">
         <div>
           <div class="text-muted small">Total Campaigns</div>
-          <div class="h3 mb-0">{{ total_campaigns }}</div>
+          <div class="h3 mb-0 kpi-number d-none"
+     data-value="{{ total_campaigns }}">
+  0
+</div>
+
+<div class="skeleton skeleton-title"></div>
+
+
         </div>
         <div class="fs-1 text-primary">✉️</div>
       </div>
@@ -20,7 +35,13 @@
       <div class="d-flex align-items-center justify-content-between">
         <div>
           <div class="text-muted small">Emails Sent</div>
-          <div class="h3 mb-0">{{ emails_sent }}</div>
+          <div
+  class="h3 mb-0 kpi-number"
+  data-value="{{ emails_sent }}"
+>
+  0
+</div>
+
         </div>
         <div class="fs-1 text-primary">📨</div>
       </div>
@@ -32,7 +53,14 @@
       <div class="d-flex align-items-center justify-content-between">
         <div>
           <div class="text-muted small">Open Rate</div>
-          <div class="h3 mb-0">{{ open_rate }}%</div>
+          <div
+  class="h3 mb-0 kpi-number"
+  data-value="{{ open_rate }}"
+  data-suffix="%"
+>
+  0%
+</div>
+
         </div>
         <div class="fs-1 text-primary">👁️</div>
       </div>
@@ -44,7 +72,14 @@
       <div class="d-flex align-items-center justify-content-between">
         <div>
           <div class="text-muted small">Click Rate</div>
-          <div class="h3 mb-0">{{ click_rate }}%</div>
+          <div
+  class="h3 mb-0 kpi-number"
+  data-value="{{ click_rate }}"
+  data-suffix="%"
+>
+  0%
+</div>
+
         </div>
         <div class="fs-1 text-primary">🖱️</div>
       </div>
@@ -97,9 +132,16 @@
       </span>
     </td>
 
-    <td>{{ c.scheduled_time|date:"M d, Y" }}</td>
+    <td>
+  {% if c.scheduled_time %}
+    {{ c.scheduled_time|date:"M d, Y" }}
+  {% else %}
+    <span class="text-muted">—</span>
+  {% endif %}
+</td>
 
-    <td class="text-end">{{ c.logs.count }}</td>
+
+    <td class="text-end">{{ c.sent_count }}</td>
 
     <td class="text-end">
   {% if c.status != "sent" %}
@@ -136,17 +178,24 @@
       <div class="card-body">
         <h5 class="mb-3">Quick Actions</h5>
 
-        <a href="{% url 'campaign_create' %}" class="btn btn-primary w-100 mb-2">
-  Create New Campaign
+      <a href="{% url 'campaign_create' %}" class="btn btn-primary w-100 mb-2 action-btn">
+  <span class="me-2">➕</span> Create New Campaign
 </a>
 
-<a href="{% url 'template_list' %}" class="btn btn-primary w-100 mb-2">
-  Manage Email Templates
+<a href="{% url 'template_list' %}" class="btn btn-primary w-100 mb-2 action-btn">
+  <span class="me-2">📝</span> Manage Email Templates
 </a>
 
-<a href="{% url 'recipient_import' %}" class="btn btn-primary w-100">
-  Import Recipients
+<a href="{% url 'recipient_list' %}" class="btn btn-primary w-100 mb-2 action-btn">
+  <span class="me-2">👥</span> Manage Recipients
 </a>
+
+<a href="{% url 'recipient_import' %}" class="btn btn-outline-primary w-100 action-btn">
+  <span class="me-2">⬆️</span> Import Recipients
+</a>
+
+
+
 
 
       </div>
@@ -159,8 +208,12 @@
   <div class="col-lg-8">
     <div class="card shadow-sm border-0">
       <div class="card-body">
-        <h5 class="mb-3">Open & Click Rates</h5>
-        <div class="bg-light rounded" style="height: 240px;"></div>
+        <h4 class="mb-3">Open & Click Rates</h4>
+<div style="height:350px; width:100%;">
+  <canvas id="openClickChart"></canvas>
+</div>
+
+
       </div>
     </div>
   </div>
@@ -174,5 +227,140 @@
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+  console.log("Chart script running");
+
+  const canvas = document.getElementById('openClickChart');
+  if (!canvas) {
+    console.error("Canvas not found");
+    return;
+  }
+
+  const ctx = canvas.getContext('2d');
+
+  const chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        {
+          label: 'Opens',
+          data: [],
+          borderColor: '#4CAF50',
+          backgroundColor: 'rgba(76,175,80,0.18)',
+          fill: true,
+          tension: 0.45,
+          pointRadius: 4,
+          pointHoverRadius: 8,
+          borderWidth: 3
+        },
+        {
+          label: 'Clicks',
+          data: [],
+          borderColor: '#FF9800',
+          backgroundColor: 'rgba(255,152,0,0.18)',
+          fill: true,
+          tension: 0.45,
+          pointRadius: 4,
+          pointHoverRadius: 8,
+          borderWidth: 3
+        }
+      ]
+    },
+
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+
+      animation: {
+        duration: 900,
+        easing: 'easeOutQuart'
+      },
+
+      interaction: {
+        mode: 'index',
+        intersect: false
+      },
+
+      plugins: {
+        tooltip: {
+          backgroundColor: '#111827',
+          titleColor: '#fff',
+          bodyColor: '#e5e7eb',
+          padding: 12,
+          cornerRadius: 8
+        },
+        legend: {
+          labels: {
+            usePointStyle: true,
+            boxWidth: 10
+          }
+        }
+      },
+
+      scales: {
+        x: { grid: { display: false } },
+        y: { beginAtZero: true }
+      }
+    }
+  });
+
+  function loadLiveData() {
+    fetch('/api/live-stats/')
+
+      .then(res => res.json())
+      .then(data => {
+        chart.data.labels = data.labels;
+        chart.data.datasets[0].data = data.opens;
+        chart.data.datasets[1].data = data.clicks;
+        chart.update();
+      });
+  }
+
+  loadLiveData();
+  setInterval(loadLiveData, 5000);
+
+});
+</script>
+
+<style>
+/* Micro-interaction for dashboard action buttons */
+.action-btn {
+  transition: all 0.25s ease;
+  position: relative;
+}
+
+.action-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+</style>
+
+<script>
+document.querySelectorAll(".kpi-number").forEach(el => {
+  const value = el.dataset.value;
+  const suffix = el.dataset.suffix || "";
+
+  if (value !== undefined) {
+    el.textContent = value + suffix;
+    el.classList.remove("d-none");
+
+    const skeleton = el.nextElementSibling;
+    if (skeleton && skeleton.classList.contains("skeleton")) {
+      skeleton.remove();
+    }
+  }
+});
+
+</script>
+
 
 {% endblock %}

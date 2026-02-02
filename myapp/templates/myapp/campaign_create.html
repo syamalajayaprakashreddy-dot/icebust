@@ -1,10 +1,67 @@
 {% extends "myapp/base.html" %}
+{% load static %}
+
+
+
 {% block content %}
+<style>
+  body {
+    background:
+      linear-gradient(rgba(10,20,40,.75), rgba(10,20,40,.75)),
+      url("{% static 'images/campaign-bg.jpg' %}") center / cover no-repeat fixed;
+    min-height: 100vh;
+  }
 
-<h2 class="mb-3">Create New Campaign</h2>
+  .campaign-wrapper {
+    min-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-<div class="card shadow-sm border-0" style="max-width: 700px;">
-  <div class="card-body">
+  .campaign-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 40px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: 0 25px 60px rgba(0,0,0,.25);
+  }
+
+  .campaign-card h2 {
+    font-weight: 700;
+    color: #0d1b2a;
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  .form-label {
+    font-weight: 600;
+    color: #344054;
+  }
+
+  .form-control {
+    border-radius: 10px;
+    padding: 12px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, #4f46e5, #2563eb);
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-weight: 600;
+  }
+
+  .btn-primary:hover {
+    opacity: .92;
+  }
+</style>
+
+<div class="campaign-wrapper">
+  <div class="campaign-card">
+    <h2>🚀 Create Email Campaign</h2>
+
     <form method="post">
       {% csrf_token %}
 
@@ -16,24 +73,27 @@
       <div class="mb-3">
         <label class="form-label">Email Template</label>
         {{ form.template }}
-        <div class="form-text">Create templates first in “Manage Email Templates”.</div>
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Scheduled Time</label>
-        {{ form.scheduled_time }}
-      </div>
+  <label class="form-label">Recipients</label>
+  {{ form.recipients }}
+</div>
+
+
 
       <div class="mb-3">
-        <label class="form-label">Status</label>
-        {{ form.status }}
+        <label class="form-label">Redirect URL</label>
+        {{ form.redirect_url }}
       </div>
 
-      <button class="btn btn-primary">Save Campaign</button>
-      <a class="btn btn-outline-secondary ms-2" href="{% url 'dashboard' %}">Cancel</a>
+      <button class="btn btn-primary w-100 mt-3">
+        Create Campaign
+      </button>
     </form>
   </div>
 </div>
 
+
+
 {% endblock %}
-    

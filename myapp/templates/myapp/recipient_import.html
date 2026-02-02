@@ -1,5 +1,66 @@
 {% extends "myapp/base.html" %}
+{% load static %}
+
 {% block content %}
-<h2>Import Recipients</h2>
-<p>This page works.</p>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-6">
+
+      <div class="card shadow-lg border-0 animate-card">
+        <div class="card-body p-4">
+
+          <h3 class="mb-3 fw-bold">📥 Import Recipients</h3>
+          <p class="text-muted mb-4">
+            Upload a CSV file with email addresses to add recipients.
+          </p>
+
+          <form method="post" enctype="multipart/form-data">
+
+
+            {% csrf_token %}
+
+            <div class="mb-3">
+              <label class="form-label fw-semibold">CSV File</label>
+              <input type="file" name="file" class="form-control" required>
+
+              <div class="form-text">
+                CSV must contain a column named <code>email</code>
+              </div>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-3">
+              Import Recipients
+            </button>
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<style>
+.animate-card {
+  animation: fadeUp 0.6s ease-out;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-card:hover {
+  transform: translateY(-4px);
+  transition: transform 0.25s ease;
+}
+</style>
+
 {% endblock %}

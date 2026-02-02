@@ -4,10 +4,14 @@ __pycache__/
 
 # Django
 db.sqlite3
+staticfiles/
 
-# Environment
+# Secrets
 .env
+my/settings.py
 
 # Virtualenv
 venv/
 
+# OS junk
+.DS_Store
